@@ -6,7 +6,7 @@ import getopt
 import re
 
 HELP_TEXT = '''issue2branch - Riccardo Massari\n
-usage: issue2branch.py [options] <issue title and number>
+usage: issue2branch.py [options] <issue title #issuenumber>
 available options are:
 -h, --help\tShow this help
 -p, --prefix\tSpecify a prefix string (default: gh)'''
@@ -14,7 +14,12 @@ available options are:
 DEFAULT_PREFIX = 'gh'
 
 def dashify(issue, prefix):
-    iname, inumber = issue.rsplit('#', 1)
+    try:
+        iname, inumber = issue.rsplit('#', 1)
+    except ValueError:
+        print "Invalid input format\n"
+        print HELP_TEXT
+        sys.exit(2)
     inumber_val = int(inumber.strip())
     dashed_iname = re.sub('[^0-9a-zA-Z_]+', '-', iname.strip()).lower().strip('-')
     return '%s-%d-%s' % (prefix, inumber_val, dashed_iname)
